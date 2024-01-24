@@ -24,6 +24,7 @@ public class ClientsConfiguration {
     public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate) {
 
         RegisteredClient demoClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                .id("2fbb93b1-8b4a-48ef-a75a-875078503a4d")
                 .clientName("Demo client")
                 .clientId("demo-client")
 
@@ -47,6 +48,7 @@ public class ClientsConfiguration {
                 .build();
 
         RegisteredClient adminClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                .id("9ac8b0c7-15c3-4d78-8ed5-02a8a5e1a253")
                 .clientName("Admin client")
                 .clientId("admin-client")
 
