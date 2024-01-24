@@ -1,6 +1,7 @@
 package com.demosso.authorizationserver.security;
 
 import com.demosso.authorizationserver.domain.User;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,8 +11,13 @@ import java.util.stream.Collectors;
 
 
 public class CustomUserDetails implements UserDetails {
+    @JsonProperty("password")
     private String password;
+
+    @JsonProperty("username")
     private final String username;
+
+    @JsonProperty("authorities")
     private final Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(String username, Collection<? extends GrantedAuthority> authorities) {
