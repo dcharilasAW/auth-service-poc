@@ -4,9 +4,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
+import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.stereotype.Component;
@@ -82,14 +85,16 @@ public class OAuth2GrantPasswordAuthenticationConverter implements Authenticatio
             )
             .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue().get(0)));
 
-        Authentication clientPrincipal = SecurityContextHolder.getContext().getAuthentication();
-
-        // find client id
+        // get registered client object
         //TODO handle case where not found
-        String clientId1 = clientRepository.findByClientId(clientId).getId();
+        RegisteredClient registeredClient = clientRepository.findByClientId(clientId);
+
+        Authentication clientPrincipal = SecurityContextHolder.getContext().getAuthentication();
+        //Authentication clientPrincipal = new OAuth2ClientAuthenticationToken(clientId,
+        //        ClientAuthenticationMethod.CLIENT_SECRET_BASIC, "admin-secret", null);
 
         return new GrantPasswordAuthenticationToken(
-            clientPrincipal, username, password, clientId1, requestedScopes, additionalParameters
+            clientPrincipal, username, password, registeredClient.getId(), requestedScopes, additionalParameters
         );
     }
 

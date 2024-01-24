@@ -20,15 +20,9 @@ public class SecurityConfiguration {
         AuthenticationSuccessHandler authenticationSuccessHandler
     ) throws Exception {
         return http
-            .authorizeHttpRequests(
-                authorize -> authorize
-                    .anyRequest().authenticated()
-            )
+            .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
             .formLogin(withDefaults())
-            .oauth2Login(oauth ->
-                oauth
-                    .successHandler(authenticationSuccessHandler)
-            )
+            .oauth2Login(oauth -> oauth.successHandler(authenticationSuccessHandler))
             .logout((logout) -> logout.permitAll())
             .build();
     }

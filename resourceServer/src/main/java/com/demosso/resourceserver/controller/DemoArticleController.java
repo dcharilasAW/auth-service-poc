@@ -27,4 +27,18 @@ public class DemoArticleController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return "demo write string";
     }
+
+    @PreAuthorize("hasAuthority('ARTICLE_ADMIN')")
+    @GetMapping("/demo/admin")
+    public String admin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return "demo admin string";
+    }
+
+    @PreAuthorize("hasAuthority('ARTICLE_SUPERADMIN')")
+    @GetMapping("/demo/superadmin")
+    public String superadmin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return "demo superadmin string";
+    }
 }
