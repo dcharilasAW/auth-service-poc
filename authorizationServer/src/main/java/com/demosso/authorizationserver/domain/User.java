@@ -1,8 +1,20 @@
 package com.demosso.authorizationserver.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -24,6 +36,9 @@ public class User implements Serializable {
 	@UuidGenerator(style = UuidGenerator.Style.TIME)
 	@Column(name = "id", updatable = false, nullable = false)
 	private UUID id;
+
+	//TODO reference to clients table
+	private String clientId;
 
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)

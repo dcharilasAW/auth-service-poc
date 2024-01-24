@@ -15,9 +15,20 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserService userService;
 
+    //TODO this should not be used, maybe replace UserDetailsService with CustomUserDetailsService
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userService.getByUsername(username);
+
+        if (user == null) {
+            throw new UsernameNotFoundException("Unable to found user: " + username);
+        }
+
+        return new CustomUserDetails(user);
+    }
+
+    public UserDetails loadUserByUsernameAndClient(String username, String clientId) throws UsernameNotFoundException {
+        User user = userService.getByUsernameAndClient(username,clientId);
 
         if (user == null) {
             throw new UsernameNotFoundException("Unable to found user: " + username);

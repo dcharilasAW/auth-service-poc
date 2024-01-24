@@ -7,7 +7,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.web.authentication.AuthenticationConverter;
+import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
@@ -20,13 +22,20 @@ import java.util.stream.Collectors;
 
 import static com.demosso.authorizationserver.security.grantPassword.AuthorizationGrantTypePassword.GRANT_PASSWORD;
 
+@Component
 public class OAuth2GrantPasswordAuthenticationConverter implements AuthenticationConverter {
+
+    private RegisteredClientRepository clientRepository;
+    public OAuth2GrantPasswordAuthenticationConverter(RegisteredClientRepository clientRepository) {
+        this.clientRepository = clientRepository;
+    }
 
     @Nullable
     @Override
     public Authentication convert(HttpServletRequest request) {
 
         String grantType = request.getParameter(OAuth2ParameterNames.GRANT_TYPE);
+        String clientId = request.getParameter(OAuth2ParameterNames.CLIENT_ID);
 
         if (!GRANT_PASSWORD.getValue().equals(grantType)) {
             return null;
@@ -75,8 +84,12 @@ public class OAuth2GrantPasswordAuthenticationConverter implements Authenticatio
 
         Authentication clientPrincipal = SecurityContextHolder.getContext().getAuthentication();
 
+        // find client id
+        //TODO handle case where not found
+        String clientId1 = clientRepository.findByClientId(clientId).getId();
+
         return new GrantPasswordAuthenticationToken(
-            clientPrincipal, username, password, requestedScopes, additionalParameters
+            clientPrincipal, username, password, clientId1, requestedScopes, additionalParameters
         );
     }
 
