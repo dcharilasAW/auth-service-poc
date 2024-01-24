@@ -17,17 +17,22 @@ public class CustomUserDetails implements UserDetails {
     @JsonProperty("username")
     private final String username;
 
+    @JsonProperty("clientId")
+    private final String clientId;
+
     @JsonProperty("authorities")
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public CustomUserDetails(String username, Collection<? extends GrantedAuthority> authorities) {
+    public CustomUserDetails(String username, String clientId, Collection<? extends GrantedAuthority> authorities) {
         this.username = username;
         this.authorities = authorities;
+        this.clientId = clientId;
     }
 
-    public CustomUserDetails(String username, String password, Collection<String> authorities) {
+    public CustomUserDetails(String username, String clientId, String password, Collection<String> authorities) {
         this.username = username;
         this.password = password;
+        this.clientId = clientId;
         this.authorities = authorities.stream()
             .map(authority -> new SimpleGrantedAuthority(authority))
             .collect(Collectors.toList());
@@ -36,6 +41,7 @@ public class CustomUserDetails implements UserDetails {
     public CustomUserDetails(User user) {
         this.username = user.getUsername();
         this.password = user.getPassword();
+        this.clientId = user.getClientId();
         this.authorities = user.getRoles().stream()
             .flatMap(role -> role.getAuthorities().stream()
                 .map(authority -> new SimpleGrantedAuthority(authority.getName()))
@@ -76,5 +82,9 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public String getClientId() {
+        return clientId;
     }
 }

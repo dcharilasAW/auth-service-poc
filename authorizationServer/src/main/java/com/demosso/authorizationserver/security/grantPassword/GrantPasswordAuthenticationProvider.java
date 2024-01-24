@@ -105,7 +105,7 @@ public class GrantPasswordAuthenticationProvider implements AuthenticationProvid
 
         ((OAuth2ClientAuthenticationToken) SecurityContextHolder.getContext().getAuthentication())
             .setDetails(
-                new CustomUserDetails(username, user.getAuthorities())
+                new CustomUserDetails(username, registeredClient.getClientId(), user.getAuthorities())
             );
 
         DefaultOAuth2TokenContext.Builder tokenContextBuilder = DefaultOAuth2TokenContext.builder()
