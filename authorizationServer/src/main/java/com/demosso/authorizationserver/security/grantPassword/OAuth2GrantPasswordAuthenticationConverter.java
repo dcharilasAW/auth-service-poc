@@ -1,6 +1,7 @@
 package com.demosso.authorizationserver.security.grantPassword;
 
 import com.demosso.authorizationserver.security.CustomUserDetails;
+import com.demosso.authorizationserver.service.ClientService;
 import com.demosso.authorizationserver.service.impl.CustomUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -14,7 +15,6 @@ import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -32,11 +32,11 @@ import static com.demosso.authorizationserver.security.grantPassword.Authorizati
 @Component
 public class OAuth2GrantPasswordAuthenticationConverter implements AuthenticationConverter {
 
-    private RegisteredClientRepository clientRepository;
+    private ClientService clientService;
     private CustomUserDetailsService userDetailsService;
 
-    public OAuth2GrantPasswordAuthenticationConverter(RegisteredClientRepository clientRepository, CustomUserDetailsService userDetailsService) {
-        this.clientRepository = clientRepository;
+    public OAuth2GrantPasswordAuthenticationConverter(ClientService clientService, CustomUserDetailsService userDetailsService) {
+        this.clientService = clientService;
         this.userDetailsService = userDetailsService;
     }
 
@@ -94,7 +94,7 @@ public class OAuth2GrantPasswordAuthenticationConverter implements Authenticatio
 
         // get registered client object
         //TODO handle case where not found
-        RegisteredClient registeredClient = clientRepository.findByClientId(clientId);
+        RegisteredClient registeredClient = clientService.getByClientId(clientId);
 
         //Authentication clientPrincipal = SecurityContextHolder.getContext().getAuthentication();
 

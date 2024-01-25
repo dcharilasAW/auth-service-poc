@@ -20,11 +20,15 @@ public class SecurityConfiguration {
         AuthenticationSuccessHandler authenticationSuccessHandler
     ) throws Exception {
         return http
-            .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
-            .formLogin(withDefaults())
-            .oauth2Login(oauth -> oauth.successHandler(authenticationSuccessHandler))
-            .logout((logout) -> logout.permitAll())
-            .build();
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/register").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .formLogin(withDefaults())
+                .oauth2Login(oauth -> oauth.successHandler(authenticationSuccessHandler))
+                .logout((logout) -> logout.permitAll())
+                .csrf().disable()
+                .build();
     }
 
     @Bean
