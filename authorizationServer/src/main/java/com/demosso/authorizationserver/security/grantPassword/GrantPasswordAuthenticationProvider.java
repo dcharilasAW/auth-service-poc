@@ -1,6 +1,7 @@
 package com.demosso.authorizationserver.security.grantPassword;
 
 import com.demosso.authorizationserver.security.CustomUserDetails;
+import com.demosso.authorizationserver.service.impl.CustomUserDetailsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -8,10 +9,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.*;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClaimAccessor;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
+import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
+import org.springframework.security.oauth2.core.OAuth2RefreshToken;
+import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
@@ -35,14 +43,14 @@ public class GrantPasswordAuthenticationProvider implements AuthenticationProvid
 
     private final Log logger = LogFactory.getLog(getClass());
     private final OAuth2AuthorizationService authorizationService;
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
     private final OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
     private final PasswordEncoder passwordEncoder;
 
     public GrantPasswordAuthenticationProvider(
         OAuth2AuthorizationService authorizationService,
         OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator,
-        UserDetailsService userDetailsService,
+        CustomUserDetailsService userDetailsService,
         PasswordEncoder passwordEncoder
     ) {
         Assert.notNull(authorizationService, "authorizationService cannot be null");
@@ -80,10 +88,11 @@ public class GrantPasswordAuthenticationProvider implements AuthenticationProvid
 
         String username = customPasswordAuthenticationToken.getUsername();
         String password = customPasswordAuthenticationToken.getPassword();
+        String clientId = customPasswordAuthenticationToken.getClientId();
 
         UserDetails user = null;
         try {
-            user = userDetailsService.loadUserByUsername(username);
+            user = userDetailsService.loadUserByUsernameAndClient(username,clientId);
         } catch (UsernameNotFoundException e) {
             throw new OAuth2AuthenticationException(OAuth2ErrorCodes.ACCESS_DENIED);
         }
@@ -96,7 +105,7 @@ public class GrantPasswordAuthenticationProvider implements AuthenticationProvid
 
         ((OAuth2ClientAuthenticationToken) SecurityContextHolder.getContext().getAuthentication())
             .setDetails(
-                new CustomUserDetails(username, user.getAuthorities())
+                new CustomUserDetails(username, registeredClient.getClientId(), user.getAuthorities())
             );
 
         DefaultOAuth2TokenContext.Builder tokenContextBuilder = DefaultOAuth2TokenContext.builder()

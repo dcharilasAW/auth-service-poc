@@ -23,6 +23,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public User getByUsernameAndClient(String username, String clientId) {
+		if (!StringUtils.hasText(username) || !StringUtils.hasText(clientId)) {
+			return null;
+		}
+
+		return repository.findByUsernameAndClientId(username,clientId).orElse(null);
+	}
+
+	@Override
 	public User save(User entity) {
 		return repository.save(entity);
 	}
