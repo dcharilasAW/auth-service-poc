@@ -43,3 +43,9 @@ spring:
     url: jdbc:postgresql://localhost:5442/demosso
     user: demosso
     password: password
+
+
+ctp:
+  auth:
+    hash:
+      strength: 4

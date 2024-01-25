@@ -105,10 +105,4 @@ public class AuthorizationServerConfiguration {
         //return new InMemoryOAuth2AuthorizationService();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
-
 }
