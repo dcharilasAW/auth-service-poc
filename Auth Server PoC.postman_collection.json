@@ -1,0 +1,224 @@
+{
+	"info": {
+		"_postman_id": "cc9828f4-5ee3-437f-aee0-7a3620487edf",
+		"name": "Auth Server PoC",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "403490"
+	},
+	"item": [
+		{
+			"name": "Get access token (authorization code)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"var bodyToken = responseJson.access_token;",
+							"pm.environment.set(\"access_token\", bodyToken)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demo-secret",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo-client",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/oauth2/token?code=FSjcjbeTul7gvzsMdPh1IoFqJVVY9dEFO5fPz9BByYVTRhcCh3SQ3j_7vR_VT3pXYSJBsWDIjmu2zLGQejQrq-wDx_wViS1oQLa7MhKXla2E9tyy20I_sIi2TS-c8PMu&grant_type=authorization_code&redirect_uri=http://localhost:8080/auth",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"oauth2",
+						"token"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "FSjcjbeTul7gvzsMdPh1IoFqJVVY9dEFO5fPz9BByYVTRhcCh3SQ3j_7vR_VT3pXYSJBsWDIjmu2zLGQejQrq-wDx_wViS1oQLa7MhKXla2E9tyy20I_sIi2TS-c8PMu"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "http://localhost:8080/auth"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get access token (grant password)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"var bodyToken = responseJson.access_token;",
+							"pm.globals.set(\"access_token\", bodyToken)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demo-secret",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo-client",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "secret",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "grant_password",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "admin-client",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8081/oauth2/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test public API",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8080/demo/public",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"demo",
+						"public"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test roles API",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8080/demo/write",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"demo",
+						"write"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register user",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"test\",\n    \"password\": \"secret\",\n    \"clientId\": \"demo-client\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/oauth2/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"oauth2",
+						"register"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
