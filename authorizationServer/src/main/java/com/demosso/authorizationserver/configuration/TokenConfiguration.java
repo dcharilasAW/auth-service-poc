@@ -1,19 +1,33 @@
 package com.demosso.authorizationserver.configuration;
 
+import com.demosso.authorizationserver.service.impl.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.OAuth2Token;
+import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
-import org.springframework.security.oauth2.server.authorization.token.*;
+import org.springframework.security.oauth2.server.authorization.token.DelegatingOAuth2TokenGenerator;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2AccessTokenGenerator;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2RefreshTokenGenerator;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.util.StringUtils;
 
 import java.util.stream.Collectors;
 
 @Configuration(proxyBeanMethods = false)
 public class TokenConfiguration {
+
+    private final CustomUserDetailsService userDetailsService;
+
+    public TokenConfiguration(CustomUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator(
@@ -37,6 +51,10 @@ public class TokenConfiguration {
                 userDetails = (UserDetails) context.getPrincipal().getDetails();
             } else if (context.getPrincipal() instanceof AbstractAuthenticationToken) {
                 userDetails = (UserDetails) context.getPrincipal().getPrincipal();
+                if (userDetails == null && context.getPrincipal() instanceof UsernamePasswordAuthenticationToken) {
+                    OAuth2Authorization authorization = context.getAuthorization();
+                    userDetails = userDetailsService.loadUserByUsernameAndClient(authorization.getPrincipalName(),authorization.getRegisteredClientId());
+                }
             } else {
                 throw new IllegalStateException("Unexpected token type");
             }

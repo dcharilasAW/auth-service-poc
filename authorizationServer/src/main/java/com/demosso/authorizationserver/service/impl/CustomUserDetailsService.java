@@ -2,7 +2,7 @@ package com.demosso.authorizationserver.service.impl;
 
 import com.demosso.authorizationserver.domain.Role;
 import com.demosso.authorizationserver.domain.User;
-import com.demosso.authorizationserver.model.mixin.RegistrationRequest;
+import com.demosso.authorizationserver.model.RegistrationRequest;
 import com.demosso.authorizationserver.security.CustomUserDetails;
 import com.demosso.authorizationserver.service.ClientService;
 import com.demosso.authorizationserver.service.RoleService;
@@ -36,13 +36,17 @@ public class CustomUserDetailsService implements UserDetailsService {
     //TODO this should not be used, maybe replace UserDetailsService with CustomUserDetailsService
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.getByUsername(username);
+        /*User user = userService.getByUsername(username);
 
         if (user == null) {
             throw new UsernameNotFoundException("Unable to found user: " + username);
         }
 
-        return new CustomUserDetails(user);
+        return new CustomUserDetails(user);*/
+
+        //TODO here we don't know the client. For now let's pick demo-client as the default one
+        RegisteredClient client = clientService.getByClientId("demo-client");
+        return loadUserByUsernameAndClient(username,client.getId());
     }
 
     public UserDetails loadUserByUsernameAndClient(String username, String clientId) throws UsernameNotFoundException {

@@ -24,6 +24,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/register").permitAll()
                         .anyRequest().authenticated()
                 )
+                //TODO login page does not send client, decide how to handle this
                 .formLogin(withDefaults())
                 .oauth2Login(oauth -> oauth.successHandler(authenticationSuccessHandler))
                 .logout((logout) -> logout.permitAll())

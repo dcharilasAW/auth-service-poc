@@ -1,6 +1,8 @@
 package com.demosso.authorizationserver.configuration;
 
+import com.demosso.authorizationserver.model.mixin.CustomUserDetailsMixin;
 import com.demosso.authorizationserver.model.mixin.OAuth2ClientAuthenticationTokenMixin;
+import com.demosso.authorizationserver.security.CustomUserDetails;
 import com.demosso.authorizationserver.security.grantPassword.GrantPasswordAuthenticationProvider;
 import com.demosso.authorizationserver.security.grantPassword.OAuth2GrantPasswordAuthenticationConverter;
 import com.demosso.authorizationserver.service.impl.CustomUserDetailsService;
@@ -99,6 +101,7 @@ public class AuthorizationServerConfiguration {
         objectMapper.registerModules(SecurityJackson2Modules.getModules(classLoader));
         objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
         objectMapper.addMixIn(OAuth2ClientAuthenticationToken.class, OAuth2ClientAuthenticationTokenMixin.class);
+        objectMapper.addMixIn(CustomUserDetails.class, CustomUserDetailsMixin.class);
         rowMapper.setObjectMapper(objectMapper);
         authorizationService.setAuthorizationRowMapper(rowMapper);
         return authorizationService;

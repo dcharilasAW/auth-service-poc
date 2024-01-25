@@ -1,7 +1,7 @@
 package com.demosso.authorizationserver.controllers;
 
 import com.demosso.authorizationserver.domain.User;
-import com.demosso.authorizationserver.model.mixin.RegistrationRequest;
+import com.demosso.authorizationserver.model.RegistrationRequest;
 import com.demosso.authorizationserver.service.impl.CustomUserDetailsService;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,4 +1,4 @@
-package com.demosso.authorizationserver.model.mixin;
+package com.demosso.authorizationserver.model;
 
 import lombok.Data;
 
