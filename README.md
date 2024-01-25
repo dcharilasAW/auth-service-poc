@@ -32,9 +32,17 @@ See guide: https://medium.com/@d.snezhinskiy/building-sso-based-on-spring-author
 
 [Auth Server PoC.postman_collection.json](Auth Server PoC.postman_collection.json)
 
+- Grant Password Flow
+
 0. Create a Global variable named `access_token`
 1. Get access token (grant password) using the username, password & client of your choice (either _admin-client_ or _demo-client_)
 2. Test roles API (either _read_, _write_, _admin_ or _superadmin_)
+
+- Authorization Code (SSO)
+
+1. Open in browser: http://localhost:8081/oauth2/authorize?response_type=code&client_id= demo-client&redirect_uri=http://localhost:8080/auth
+2. Login with valid credentials. User will be redirected to new page. Copy the auth code from the url.
+3. Get access token (authorization code), after setting the above code as param
 
 # Added features
 
@@ -46,7 +54,6 @@ See guide: https://medium.com/@d.snezhinskiy/building-sso-based-on-spring-author
 # Next steps
 - DB Lock (to support multiple instances) _-> get from auth-service_
 - DB cleanup (expired tokens in oauth2_authorization) _-> get from auth-service_
-- SSO
 - Authorization of asynchronous services
 - Add password encryption _-> get from auth-service_
 - Add data to authorize system calls (e.g. scheduler)
