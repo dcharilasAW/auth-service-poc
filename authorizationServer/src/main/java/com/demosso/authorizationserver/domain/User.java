@@ -20,6 +20,7 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -32,6 +33,9 @@ import java.util.UUID;
 @Entity(name = "User")
 @Table(name = "app_user")
 public class User implements Serializable {
+
+	private static final long OTP_VALID_DURATION = 5 * 60 * 1000;   // 5 minutes
+
 	@Id
 	@UuidGenerator(style = UuidGenerator.Style.TIME)
 	@Column(name = "id", updatable = false, nullable = false)
@@ -66,4 +70,27 @@ public class User implements Serializable {
 
 	@CreationTimestamp
 	protected LocalDateTime createdAt;
+
+	private String otp;
+
+	private LocalDateTime otpRequestedAt;
+
+
+	//TODO move to another class
+	public boolean isOTPRequired() {
+		if (this.getOtp() == null) {
+			return false;
+		}
+
+		long currentTimeInMillis = System.currentTimeMillis();
+		//TODO fix hardcoded zone
+		long otpRequestedTimeInMillis = this.otpRequestedAt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+		if (otpRequestedTimeInMillis + OTP_VALID_DURATION < currentTimeInMillis) {
+			// OTP expires
+			return false;
+		}
+
+		return true;
+	}
 }

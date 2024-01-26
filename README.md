@@ -2,6 +2,7 @@
 
 Checked out from https://github.com/snezhinskiy/demo-sso  
 See guide: https://medium.com/@d.snezhinskiy/building-sso-based-on-spring-authorization-server-part-1-of-3-68b3dda053fd
+2FA guide: https://www.codejava.net/frameworks/spring-boot/spring-security-otp-email-tutorial
 
 # Components
 
