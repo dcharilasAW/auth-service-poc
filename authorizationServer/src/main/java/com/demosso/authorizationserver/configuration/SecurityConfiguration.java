@@ -46,18 +46,17 @@ public class SecurityConfiguration {
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(beforeLoginFilter, BeforeAuthenticationFilter.class)
-                /*.formLogin()
+                .formLogin()
                     .loginPage("/login")
-                    .usernameParameter("email")
+                    .usernameParameter("username")
                     .successHandler(loginSuccessHandler)
                     .failureHandler(loginFailureHandler)
-                    .permitAll()*/
-                .formLogin(withDefaults())
-                .oauth2Login(oauth -> {
+                    .permitAll()
+                /*.oauth2Login(oauth -> {
                     oauth.successHandler(loginSuccessHandler);
                     oauth.failureHandler(loginFailureHandler);
-                })
-                //.and()
+                })*/
+                .and()
                 .logout((logout) -> logout.permitAll())
                 .csrf().disable()
                 .build();

@@ -31,6 +31,10 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         if (user.isOTPRequired()) {
             userService.clearOTP(user);
         }
+
+        //response.sendRedirect("/foo");
+        super.setDefaultTargetUrl("/foo");
+        super.setAlwaysUseDefaultTargetUrl(true);
         super.onAuthenticationSuccess(request, response, authentication);
     }
 

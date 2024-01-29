@@ -26,13 +26,19 @@
     <div class="border border-secondary rounded p-3">
         <div>
             <p>
-                <input type="email" name="email" class="form-control"
-                       placeholder="E-mail" th:value="${param.email}" required autofocus/>
+                <input type="text" name="username" class="form-control"
+                       placeholder="Username" th:value="${param.username}" required autofocus/>
             </p>
-            <p>
-                <input type="password" name="password" class="form-control"
-                       th:placeholder="${param.otp != null ? 'Your One Time Password' : 'Password'}" required />
-            </p>
+            <div th:if="${param.otp}">
+                <p>
+                    <input type="password" name="password" class="form-control"
+                           placeholder="Password" required />
+                </p>
+                <p>
+                    <input type="number" name="otp" class="form-control"
+                           placeholder="Your One Time Password" required />
+                </p>
+            </div>
             <p class="text-center">
                 <input type="submit" value="Login" class="btn btn-primary" />
             </p>

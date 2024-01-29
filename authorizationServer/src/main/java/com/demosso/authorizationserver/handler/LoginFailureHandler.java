@@ -31,18 +31,16 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
         log.info("onAuthenticationFailure username: " + email);
         request.setAttribute("email", email);
 
-        /*String redirectURL = "/login?error&email=" + email;
+        String redirectURL = "/login?error&username=" + email;
 
         if (exception.getMessage().contains("OTP")) {
-            redirectURL = "/login?otp=true&email=" + email;
+            redirectURL = "/login?otp=true&username=" + email;
         } else {
             User user = userService.getByUsername(email);
             if (user.isOTPRequired()) {
-                redirectURL = "/login?otp=true&email=" + email;
+                redirectURL = "/login?otp=true&username=" + email;
             }
-        }*/
-
-        String redirectURL = "http://localhost:8081/oauth2/authorize?response_type=code&client_id=demo-client&redirect_uri=http://localhost:8080/auth";
+        }
 
         super.setDefaultFailureUrl(redirectURL);
         super.onAuthenticationFailure(request, response, exception);

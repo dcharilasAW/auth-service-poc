@@ -2,13 +2,12 @@ package com.demosso.authorizationserver.filter;
 
 import com.demosso.authorizationserver.domain.User;
 import com.demosso.authorizationserver.service.UserService;
-import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -17,8 +16,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
-
-import java.io.UnsupportedEncodingException;
 
 @Component
 public class BeforeAuthenticationFilter
@@ -62,6 +59,11 @@ public class BeforeAuthenticationFilter
 
         if (user != null) {
             if (user.isOTPRequired()) {
+                // verify OTP is correct
+                String otp = request.getParameter("otp");
+                if (otp == null || !otp.equals(user.getOtp())) {
+                    throw new BadCredentialsException("Wrong OTP");
+                }
                 return super.attemptAuthentication(request, response);
             }
             logger.info("attemptAuthentication - email: " + email);
