@@ -45,16 +45,25 @@ See guide: https://medium.com/@d.snezhinskiy/building-sso-based-on-spring-author
 2. Login with valid credentials. User will be redirected to new page. Copy the auth code from the url.
 3. Get access token (authorization code), after setting the above code as param
 
+- Form login with Otp verification
+
+1. Open in browser http://localhost:8081/login and fill username
+2. You will receive password in e-mail (currently hardcoded in UserServiceImpl). Alternatively, you can see the otp in `app_user` table.
+3. Back in the browser, fill password and otp in the form. You should be able to login now. You can verify success by checking that otp is deleted in `app_user` table and a new token is generated in `oauth2_authorization` table. 
+
+**You need to provide valid smtp credentials in `application.yml`.**
+
 # Added features
 
 1. Persist tokens (table oauth2_authorization)  -> get from auth-service
-2. Associate users with clients and support same username in mutiple clients with different authorities.
+2. Associate users with clients and support same username in multiple clients with different authorities.
 3. User registration
-
+4. Custom login with Otp verification (via email)
 
 # Next steps
 - DB Lock (to support multiple instances) _-> get from auth-service_
 - DB cleanup (expired tokens in oauth2_authorization) _-> get from auth-service_
 - Authorization of asynchronous services
 - Add password encryption _-> get from auth-service_
-- Add data to authorize system calls (e.g. scheduler)
+- Authorize system calls (e.g. scheduler)
+- Pass client id information (in some parts it is currently hardcoded)
