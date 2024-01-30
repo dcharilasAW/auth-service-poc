@@ -67,3 +67,4 @@ See guide: https://medium.com/@d.snezhinskiy/building-sso-based-on-spring-author
 - Add password encryption _-> get from auth-service_
 - Authorize system calls (e.g. scheduler)
 - Pass client id information (in some parts it is currently hardcoded)
+- Combine 2FA with SSO (aka login form to use authorization code instead of grant password)

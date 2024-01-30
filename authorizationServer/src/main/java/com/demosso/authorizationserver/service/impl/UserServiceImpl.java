@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
 		user.setOtpRequestedAt(LocalDateTime.now());
 		save(user);
 
-		sendOTPEmail(user, otp);
+		//sendOTPEmail(user, otp);
 	}
 
 	//TODO move to another service
