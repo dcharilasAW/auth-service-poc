@@ -5,6 +5,8 @@ import com.demosso.authorizationserver.model.mixin.OAuth2ClientAuthenticationTok
 import com.demosso.authorizationserver.security.CustomUserDetails;
 import com.demosso.authorizationserver.security.grantPassword.GrantPasswordAuthenticationProvider;
 import com.demosso.authorizationserver.security.grantPassword.OAuth2GrantPasswordAuthenticationConverter;
+import com.demosso.authorizationserver.security.usernamePassword.UsernamePasswordAuthenticationProvider;
+import com.demosso.authorizationserver.service.ClientService;
 import com.demosso.authorizationserver.service.impl.CustomUserDetailsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
@@ -12,11 +14,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.jackson2.CoreJackson2Module;
 import org.springframework.security.jackson2.SecurityJackson2Modules;
@@ -30,6 +32,9 @@ import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2A
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+
+import java.lang.reflect.Field;
+import java.util.List;
 
 @Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfiguration {
@@ -45,7 +50,7 @@ public class AuthorizationServerConfiguration {
     public SecurityFilterChain authorizationSecurityFilterChain(
         HttpSecurity http,
         GrantPasswordAuthenticationProvider grantPasswordAuthenticationProvider,
-        DaoAuthenticationProvider daoAuthenticationProvider
+        UsernamePasswordAuthenticationProvider usernamePasswordAuthenticationProvider
     ) throws Exception {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
@@ -55,7 +60,7 @@ public class AuthorizationServerConfiguration {
                 tokenEndpoint
                     .accessTokenRequestConverter(converter)
                     .authenticationProvider(grantPasswordAuthenticationProvider)
-                    .authenticationProvider(daoAuthenticationProvider)
+                    .authenticationProvider(usernamePasswordAuthenticationProvider)
             )
             .oidc(Customizer.withDefaults()); // Enable OpenID Connect 1.0
 
@@ -71,22 +76,23 @@ public class AuthorizationServerConfiguration {
     }
 
     @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider(
-        PasswordEncoder passwordEncoder, UserDetailsService userDetailsService
-    ) {
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-        return daoAuthenticationProvider;
-    }
-
-    @Bean
     public GrantPasswordAuthenticationProvider grantPasswordAuthenticationProvider(
             CustomUserDetailsService userDetailsService, OAuth2TokenGenerator<?> jwtTokenCustomizer,
             OAuth2AuthorizationService authorizationService, PasswordEncoder passwordEncoder
     ) {
         return new GrantPasswordAuthenticationProvider(
             authorizationService, jwtTokenCustomizer, userDetailsService, passwordEncoder
+        );
+    }
+
+    @Bean
+    public UsernamePasswordAuthenticationProvider usernamePasswordAuthenticationProvider(
+            CustomUserDetailsService userDetailsService, OAuth2TokenGenerator<?> jwtTokenCustomizer,
+            OAuth2AuthorizationService authorizationService, PasswordEncoder passwordEncoder,
+            ClientService clientService
+    ) {
+        return new UsernamePasswordAuthenticationProvider(
+                authorizationService, jwtTokenCustomizer, userDetailsService, passwordEncoder, clientService
         );
     }
 
@@ -106,6 +112,26 @@ public class AuthorizationServerConfiguration {
         authorizationService.setAuthorizationRowMapper(rowMapper);
         return authorizationService;
         //return new InMemoryOAuth2AuthorizationService();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http, /*BCryptPasswordEncoder bCryptPasswordEncoder,*/
+                                                       UserDetailsService userDetailService, GrantPasswordAuthenticationProvider grantPasswordAuthenticationProvider,
+                                                       UsernamePasswordAuthenticationProvider usernamePasswordAuthenticationProvider)
+            throws Exception {
+        AuthenticationManager authManager =  http.getSharedObject(AuthenticationManagerBuilder.class)
+                //.authenticationProvider(grantPasswordAuthenticationProvider)
+                .userDetailsService(userDetailService)
+                //TODO add password encoder
+                //.passwordEncoder(bCryptPasswordEncoder)
+                .and()
+                .build();
+
+        //TODO not sure if this is still needed, the reason was to remove the default provided, daoAuthenticationProvider
+        Field field = authManager.getClass().getDeclaredField("providers");
+        field.setAccessible(true);
+        field.set(authManager, List.of(grantPasswordAuthenticationProvider,usernamePasswordAuthenticationProvider));
+        return authManager;
     }
 
 }

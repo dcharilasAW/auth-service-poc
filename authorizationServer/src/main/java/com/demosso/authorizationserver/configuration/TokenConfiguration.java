@@ -8,7 +8,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.OAuth2Token;
-import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.token.DelegatingOAuth2TokenGenerator;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2AccessTokenGenerator;
@@ -50,10 +49,10 @@ public class TokenConfiguration {
             if (context.getPrincipal() instanceof OAuth2ClientAuthenticationToken) {
                 userDetails = (UserDetails) context.getPrincipal().getDetails();
             } else if (context.getPrincipal() instanceof AbstractAuthenticationToken) {
-                userDetails = (UserDetails) context.getPrincipal().getPrincipal();
-                if (userDetails == null && context.getPrincipal() instanceof UsernamePasswordAuthenticationToken) {
-                    OAuth2Authorization authorization = context.getAuthorization();
-                    userDetails = userDetailsService.loadUserByUsernameAndClient(authorization.getPrincipalName(),authorization.getRegisteredClientId());
+                if (context.getPrincipal() instanceof UsernamePasswordAuthenticationToken) {
+                    userDetails = userDetailsService.loadUserByUsernameAndClient((String) context.getPrincipal().getPrincipal(),context.getRegisteredClient().getId());
+                } else {
+                    userDetails = (UserDetails) context.getPrincipal().getPrincipal();
                 }
             } else {
                 throw new IllegalStateException("Unexpected token type");
