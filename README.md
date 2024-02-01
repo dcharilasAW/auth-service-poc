@@ -40,7 +40,7 @@ See guide: https://medium.com/@d.snezhinskiy/building-sso-based-on-spring-author
 
 - Authorization Code (SSO)
 
-1. Open in browser: http://localhost:8081/oauth2/authorize?response_type=code&client_id= demo-client&redirect_uri=http://localhost:8080/auth
+1. Open in browser: http://localhost:8081/oauth2/authorize?response_type=code&client_id=demo-client&redirect_uri=http://localhost:8080/auth
 2. Login with valid credentials. User will be redirected to new page. Copy the auth code from the url.
 3. Get access token (authorization code), after setting the above code as param
 
