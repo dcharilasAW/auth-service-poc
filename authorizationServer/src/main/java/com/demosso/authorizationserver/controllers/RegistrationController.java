@@ -3,7 +3,8 @@ package com.demosso.authorizationserver.controllers;
 import com.demosso.authorizationserver.domain.User;
 import com.demosso.authorizationserver.model.RegistrationRequest;
 import com.demosso.authorizationserver.service.impl.CustomUserDetailsService;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +19,7 @@ public class RegistrationController {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-    @PutMapping(path = "/register", consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/register", consumes = APPLICATION_JSON_VALUE)
     public String register(@RequestBody RegistrationRequest request) {
         User user = customUserDetailsService.registerUser(request);
         return "registered user with id " + user.getId();

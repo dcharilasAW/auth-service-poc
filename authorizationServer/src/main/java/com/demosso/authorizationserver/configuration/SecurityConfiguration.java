@@ -19,7 +19,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http,
         AuthenticationSuccessHandler authenticationSuccessHandler
     ) throws Exception {
-        return http
+        /*return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/register").permitAll()
                         .anyRequest().authenticated()
@@ -27,6 +27,24 @@ public class SecurityConfiguration {
                 //TODO login page does not send client, decide how to handle this
                 .formLogin(withDefaults())
                 .oauth2Login(oauth -> oauth.successHandler(authenticationSuccessHandler))
+                .logout((logout) -> logout.permitAll())
+                .csrf().disable()
+                .build();*/
+
+        return http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/register").permitAll()
+                        .requestMatchers("/login").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .formLogin()
+                    .loginPage("/login")
+                    .loginProcessingUrl("/login")
+                    .usernameParameter("username")
+                    .successHandler(authenticationSuccessHandler)
+                    .permitAll()
+                .and()
+                //.oauth2Login(oauth -> oauth.successHandler(authenticationSuccessHandler))
                 .logout((logout) -> logout.permitAll())
                 .csrf().disable()
                 .build();

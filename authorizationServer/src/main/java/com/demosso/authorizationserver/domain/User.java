@@ -40,6 +40,9 @@ public class User implements Serializable {
 	//TODO reference to clients table
 	private String clientId;
 
+	//TODO make enum
+	private String userState;
+
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinTable(name = "user_role",

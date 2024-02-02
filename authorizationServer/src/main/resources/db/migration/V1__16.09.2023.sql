@@ -8,7 +8,9 @@ CREATE TABLE IF NOT EXISTS app_user (
     locale varchar(2) DEFAULT NULL,
     avatar_url varchar(2048) DEFAULT NULL,
     active boolean DEFAULT false NOT NULL,
-    created_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone NOT NULL,
+    client_id varchar(100) NOT NULL,
+    user_state  varchar(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS role (

@@ -3,6 +3,7 @@ package com.demosso.authorizationserver.service.impl;
 import com.demosso.authorizationserver.domain.Role;
 import com.demosso.authorizationserver.domain.User;
 import com.demosso.authorizationserver.model.RegistrationRequest;
+import com.demosso.authorizationserver.repository.UserStateRoleRepository;
 import com.demosso.authorizationserver.security.CustomUserDetails;
 import com.demosso.authorizationserver.service.ClientService;
 import com.demosso.authorizationserver.service.RoleService;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -26,11 +28,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final ClientService clientService;
     private final PasswordEncoder passwordEncoder;
 
-    public CustomUserDetailsService(UserService userService, RoleService roleService, ClientService clientService, PasswordEncoder passwordEncoder) {
+    private final UserStateRoleRepository stateRepository;
+
+    public CustomUserDetailsService(UserService userService, RoleService roleService, ClientService clientService, PasswordEncoder passwordEncoder, UserStateRoleRepository stateRepository) {
         this.userService = userService;
         this.roleService = roleService;
         this.clientService = clientService;
         this.passwordEncoder = passwordEncoder;
+        this.stateRepository = stateRepository;
     }
 
     //TODO this should not be used, maybe replace UserDetailsService with CustomUserDetailsService
@@ -70,9 +75,8 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new Exception("user already exists");
         }
 
-        //TODO add some logic for roles
-        Role defaultRole = request.getClientId().contains("admin") ?
-                roleService.getByName("NORMAL_ADMIN") : roleService.getByName("USER");
+        String state = "REGISTERED";
+
         User user = User.builder()
                 .active(true)
                 .username(request.getUsername())
@@ -80,9 +84,15 @@ public class CustomUserDetailsService implements UserDetailsService {
                 //.password(passwordEncoder.encode(request.getPassword()))
                 .password("{noop}" + request.getPassword())
                 .clientId(client.getId())
-                .roles(Set.of(defaultRole))
+                .roles(Set.of(getRoleAccordingToState(state)))
+                .userState(state)
                 .build();
         return userService.save(user);
+    }
+
+    private Role getRoleAccordingToState(String state) {
+        //TODO handle case if role not found
+        return stateRepository.findRoleByUserState(state).get().getRole();
     }
 
 

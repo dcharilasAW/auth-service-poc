@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Please Log In</title>
+    <style>
+        .login-page {
+            width: 700px;
+            padding: 8% 0 0;
+            margin: auto;
+        }
+        .form {
+            position: relative;
+            z-index: 1;
+            background: #FFFFFF;
+            max-width: 360px;
+            margin: 0 auto 100px;
+            padding: 45px;
+            text-align: center;
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+        }
+        .form input {
+            font-family: "Roboto", sans-serif;
+            outline: 0;
+            background: #f2f2f2;
+            width: 100%;
+            border: 0;
+            margin: 0 0 15px;
+            padding: 15px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .form .button {
+            font-family: "Roboto", sans-serif;
+            text-transform: uppercase;
+            outline: 0;
+            background: #4169E1;
+            width: 100%;
+            border: 0;
+            padding: 15px;
+            color: #FFFFFF;
+            font-size: 14px;
+            -webkit-transition: all 0.3 ease;
+            transition: all 0.3 ease;
+            cursor: pointer;
+        }
+        .form button:hover,.form button:active,.form button:focus {
+            background: #4169E1;
+        }
+        .form .message {
+            margin: 15px 0 0;
+            color: #b3b3b3;
+            font-size: 12px;
+        }
+        .form .error {
+            color: red;
+        }
+        .form h1 {
+            color: #4169E1;
+        }
+        .form .message a {
+            color: #4169E1;
+            text-decoration: none;
+        }
+        body {
+            #background: #4169E1;
+            background-image: url("https://e3.365dm.com/22/12/2048x1152/skynews-lottery-balls_6006584.jpg");
+            font-family: "Roboto", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around
+        }
+    </style>
+</head>
+<body>
+<div class="login-page">
+    <div class="form">
+        <h1>Lottery Demo</h1>
+        <h2>Please Log In</h2>
+        <div class='container'>
+            <h4>Not a member? Not a problem!</h4>
+            <a th:href="@{/register}">Sign up</a>
+        </div>
+        <div class="error" th:if="${param.error}">
+            Invalid username and password.</div>
+        <div class="error" th:if="${param.logout}">
+            You have been logged out.</div>
+        <form  class="login-form" th:action="@{/login}" th:object="${loginRequest}" method="post">
+            <div>
+                <input type="text" name="username" placeholder="Username"/>
+            </div>
+            <div>
+                <input type="password" name="password" placeholder="Password"/>
+            </div>
+            <div>
+                <input type="hidden" name="clientId" placeholder="Password" th:value="demo-client"/>
+            </div>
+            <input class="button" type="submit" value="Log In" />
+        </form>
+    </div>
+</div>
+</body>
+</html>
