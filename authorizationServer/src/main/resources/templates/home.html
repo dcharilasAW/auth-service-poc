@@ -95,6 +95,50 @@
                     });
                 }
             });
+
+            $('#viewForm').submit(function (event) {
+                event.preventDefault();
+
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:8081/games",
+                    headers: {"Authorization": "Bearer " + access_token},
+                    success: function (response) {
+                        console.log(response);
+                        alert(response);
+                    },
+                    error: function(response) {
+                        console.log(response);
+                        //alert(response);
+                        if (response.status == 403) {
+                            alert('You are not allowed to do that yet.');
+                        }
+                    },
+                    dataType: "text"
+                });
+            });
+
+            $('#playForm').submit(function (event) {
+                event.preventDefault();
+
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:8081/games/play",
+                    headers: {"Authorization": "Bearer " + access_token},
+                    success: function (response) {
+                        console.log(response);
+                        alert(response);
+                    },
+                    error: function(response) {
+                        console.log(response);
+                        //alert(response);
+                        if (response.status == 403) {
+                            alert('You are not allowed to do that yet.');
+                        }
+                    },
+                    dataType: "text"
+                });
+            });
         })
 
     </script>
@@ -127,6 +171,17 @@
     </div>
     <div class="img-container">
         <img src="https://codecanyon.img.customer.envatousercontent.com/files/485837075/Thumb+590x300.jpg?auto=compress%2Cformat&fit=crop&crop=top&w=590&h=300&s=bc9394b6f5bf6d2e36d8c5150c14d0ef" alt="Mountains" style="width:100%">
+    </div>
+</div>
+
+<div class="clearfix">
+    <div class="form">
+        <form id="viewForm" class="login-form" method="post">
+            <input class="button" type="submit" value="Learn more"/>
+        </form>
+        <form id="playForm" class="login-form" method="post">
+            <input class="button" type="submit" value="Play!"/>
+        </form>
     </div>
 </div>
 

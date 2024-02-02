@@ -13,15 +13,15 @@ public class GamesController {
 
     @PreAuthorize("hasAuthority('GAME_VIEW')")
     @GetMapping("/games")
-    public String read() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return "demo read string";
+    public String info() {
+        SecurityContextHolder.getContext().getAuthentication();
+        return "Fantastic games, you click on shiny stuff and win money.";
     }
 
     @PreAuthorize("hasAuthority('GAME_PLAY')")
     @PostMapping("/games/play")
-    public String write() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return "demo write string";
+    public String play() {
+        SecurityContextHolder.getContext().getAuthentication();
+        return "You have won!";
     }
 }
