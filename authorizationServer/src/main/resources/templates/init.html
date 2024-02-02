@@ -69,60 +69,23 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-        .container {
-            display: flex;
-            justify-content: space-around
-        }
+
     </style>
     <script>
-
-        $(function () {
-            $('#loginForm').submit(function (event) {
-                event.preventDefault();
-                object= {}
-                formData = new FormData(event.target);
-                formData.forEach((value, key) => object[key] = value);
-                var txt = JSON.stringify(object);
-                $.ajax({
-                    type: "POST",
-                    url: "/authenticate",
-                    data: txt,
-                    success: function () {
-                        //alert('Login successful!');
-                    },
-                    dataType: "json",
-                    contentType: "application/json"
-                });
-            });
-        })
     </script>
 </head>
 <body>
 <div class="login-page">
+    <body>
     <div class="form">
         <h1>Lottery Demo</h1>
-        <h2>Please Log In</h2>
+        <a href="http://localhost:8080/oauth2/authorize?response_type=code&client_id=demo-client" target="_blank">Click here to login</a>
         <div class='container'>
             <h4>Not a member? Not a problem!</h4>
             <a th:href="@{/register}">Sign up</a>
         </div>
-        <div class="error" th:if="${param.error}">
-            Invalid username and password.</div>
-        <div class="error" th:if="${param.logout}">
-            You have been logged out.</div>
-        <form  id="loginForm" class="login-form" method="post">
-            <div>
-                <input type="text" name="username" placeholder="Username"/>
-            </div>
-            <div>
-                <input type="password" name="password" placeholder="Password"/>
-            </div>
-            <div>
-                <input type="hidden" name="clientId" placeholder="clientId" value="demo-client"/>
-            </div>
-            <input class="button" type="submit" value="Log In" />
-        </form>
     </div>
+    </body>
 </div>
 </body>
 </html>

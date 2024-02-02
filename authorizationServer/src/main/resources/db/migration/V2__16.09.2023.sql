@@ -13,8 +13,8 @@ INSERT INTO authority (id, name) VALUES (1, 'GAME_VIEW');
 INSERT INTO authority (id, name) VALUES (2, 'GAME_PLAY');
 
 -- unverified users only can view games
-INSERT INTO role_authority (role_id, authority_id) VALUES (2, 1);
+INSERT INTO role_authority (role_id, authority_id) VALUES (1, 1);
 
 -- verified users can also play games
-INSERT INTO role_authority (role_id, authority_id) VALUES (1, 1);
-INSERT INTO role_authority (role_id, authority_id) VALUES (1, 2);
+INSERT INTO role_authority (role_id, authority_id) VALUES (2, 1);
+INSERT INTO role_authority (role_id, authority_id) VALUES (2, 2);

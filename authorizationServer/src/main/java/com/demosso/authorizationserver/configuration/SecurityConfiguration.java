@@ -35,16 +35,25 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/register").permitAll()
                         .requestMatchers("/login").permitAll()
+                        .requestMatchers("/authenticate").permitAll()
+                        .requestMatchers("/init").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin()
-                    .loginPage("/login")
-                    .loginProcessingUrl("/login")
-                    .usernameParameter("username")
-                    .successHandler(authenticationSuccessHandler)
-                    .permitAll()
-                .and()
-                //.oauth2Login(oauth -> oauth.successHandler(authenticationSuccessHandler))
+                //.formLogin()
+                //    .loginPage("/login")
+                //    .usernameParameter("username")
+                    //.loginProcessingUrl("/login")
+                    //.defaultSuccessUrl("/home")
+                //    .successHandler(authenticationSuccessHandler)
+                 //   .permitAll()
+                //.and()
+                .formLogin(withDefaults())
+                .oauth2Login(oauth -> {
+                    //TODO custom page
+                    //oauth.loginPage("/login");
+                    oauth.authorizationEndpoint(withDefaults());
+                    oauth.successHandler(authenticationSuccessHandler);
+                })
                 .logout((logout) -> logout.permitAll())
                 .csrf().disable()
                 .build();
