@@ -3,28 +3,141 @@
 <head>
     <title>Lottery</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <style>
+        .form {
+            position: relative;
+            z-index: 1;
+            background: #FFFFFF;
+            max-width: 360px;
+            margin: 0 auto 100px;
+            padding: 45px;
+            text-align: center;
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+        }
+        .form input {
+            font-family: "Roboto", sans-serif;
+            outline: 0;
+            background: #f2f2f2;
+            width: 100%;
+            border: 0;
+            margin: 0 0 15px;
+            padding: 15px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .form .button {
+            font-family: "Roboto", sans-serif;
+            text-transform: uppercase;
+            outline: 0;
+            background: #4169E1;
+            width: 100%;
+            border: 0;
+            padding: 15px;
+            color: #FFFFFF;
+            font-size: 14px;
+            -webkit-transition: all 0.3 ease;
+            transition: all 0.3 ease;
+            cursor: pointer;
+        }
+        .form button:hover,.form button:active,.form button:focus {
+            background: #4169E1;
+        }
+    </style>
     <script>
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const code = urlParams.get('code');
+        var access_token = '';
+        var otp_sent = false;
 
         $(function () {
+            $("#otp").hide();
+
             $.ajax({
                 type: "POST",
                 url: "/oauth2/token?grant_type=authorization_code&code=" + code,
                 headers: {"Authorization": "Basic ZGVtby1jbGllbnQ6ZGVtby1zZWNyZXQ="},
                 success: function (response) {
-                    const access_token = response.access_token;
-                    alert(access_token);
+                    access_token = response.access_token;
+                    //alert(access_token);
                 },
                 error: function (response) {
                 }
             });
         });
 
+        $(function () {
+            $('#verifyForm').submit(function (event) {
+                event.preventDefault();
+                if (!otp_sent) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/verify/request",
+                        headers: {"Authorization": "Bearer " + access_token},
+                        success: function () {
+                            $("#otp").show();
+                            otp_sent = true;
+                        },
+                        dataType: "json",
+                        contentType: "application/json"
+                    });
+                } else {
+                    $.ajax({
+                        type: "POST",
+                        url: "/verify/" + $("#otp").val(),
+                        headers: {"Authorization": "Bearer " + access_token},
+                        success: function () {
+                            $("#verifyDiv").hide();
+                            alert("Well done! Enjoy your new content!");
+                        },
+                        dataType: "json",
+                        contentType: "application/json"
+                    });
+                }
+            });
+        })
+
     </script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .img-container {
+            float: left;
+            width: 33.33%;
+            padding: 5px;
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+    </style>
 </head>
 <body>
-I AM HOME
+
+<div class="clearfix">
+    <div class="img-container">
+        <img src="https://codecanyon.img.customer.envatousercontent.com/files/238140332/lotterynumbers_bg.jpg?auto=compress%2Cformat&fit=crop&crop=top&w=590&h=300&s=8a8d9ef47f6dac244f0ff0456dd1cb37" alt="Italy" style="width:100%">
+    </div>
+    <div class="img-container">
+        <img src="https://codecanyon.img.customer.envatousercontent.com/files/323180621/Inline.jpg?auto=compress%2Cformat&fit=crop&crop=top&w=590&h=300&s=aaa56d41e67857e90bd8d4950700bc8e" alt="Forest" style="width:100%">
+    </div>
+    <div class="img-container">
+        <img src="https://codecanyon.img.customer.envatousercontent.com/files/485837075/Thumb+590x300.jpg?auto=compress%2Cformat&fit=crop&crop=top&w=590&h=300&s=bc9394b6f5bf6d2e36d8c5150c14d0ef" alt="Mountains" style="width:100%">
+    </div>
+</div>
+
+<div id="verifyDiv" class="form">
+    <form id="verifyForm" class="login-form" method="post">
+        <div>
+            <input type="number" id="otp" name="otp" placeholder="Enter 8-digit code" />
+        </div>
+        <input class="button" type="submit" value="Verify my e-mail"/>
+    </form>
+</div>
+
 </body>
 </html>

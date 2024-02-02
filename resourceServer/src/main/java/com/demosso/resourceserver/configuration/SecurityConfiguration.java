@@ -21,7 +21,7 @@ public class SecurityConfiguration {
           auth -> auth
               .opaqueToken(
                   opaqueTokenConfigurer -> opaqueTokenConfigurer
-                      .introspectionUri("http://localhost:8081/oauth2/introspect")
+                      .introspectionUri("http://localhost:8080/oauth2/introspect")
                           //TODO change
                       .introspectionClientCredentials("demo-client", "demo-secret")
                       .authenticationConverter(opaqueTokenAuthenticationConverter)

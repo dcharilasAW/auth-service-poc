@@ -1,5 +1,6 @@
 package com.demosso.authorizationserver.service.impl;
 
+import com.demosso.authorizationserver.constant.UserStateEnum;
 import com.demosso.authorizationserver.domain.Role;
 import com.demosso.authorizationserver.domain.User;
 import com.demosso.authorizationserver.model.RegistrationRequest;
@@ -16,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -75,7 +78,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new Exception("user already exists");
         }
 
-        String state = "REGISTERED";
+        String state = UserStateEnum.REGISTERED.name();
 
         User user = User.builder()
                 .active(true)
@@ -84,7 +87,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 //.password(passwordEncoder.encode(request.getPassword()))
                 .password("{noop}" + request.getPassword())
                 .clientId(client.getId())
-                .roles(Set.of(getRoleAccordingToState(state)))
+                .roles(new HashSet<>(Arrays.asList(getRoleAccordingToState(state))))
                 .userState(state)
                 .build();
         return userService.save(user);
@@ -95,5 +98,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         return stateRepository.findRoleByUserState(state).get().getRole();
     }
 
+
+    public User verifyUser(String username, String clientId) {
+        User user = userService.getByUsernameAndClient(username,clientId);
+        String state = UserStateEnum.VERIFIED.name();
+        user.setUserState(state);
+        user.setRoles(new HashSet<>(Arrays.asList(getRoleAccordingToState(state))));
+        userService.save(user);
+        return user;
+    }
 
 }
