@@ -31,7 +31,7 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .build();*/
 
-        return http
+        return http.csrf().disable()
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/register").permitAll()
                         .requestMatchers("/login").permitAll()
@@ -54,8 +54,12 @@ public class SecurityConfiguration {
                     oauth.authorizationEndpoint(withDefaults());
                     oauth.successHandler(authenticationSuccessHandler);
                 })
-                .logout((logout) -> logout.permitAll())
-                .csrf().disable()
+                .logout(logout -> {
+                    logout.permitAll();
+                    logout.clearAuthentication(true);
+                    logout.invalidateHttpSession(true);
+                    logout.deleteCookies("JSESSIONID");
+                })
                 .build();
     }
 

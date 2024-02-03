@@ -112,6 +112,10 @@
                         //alert(response);
                         if (response.status == 403) {
                             alert('You are not allowed to do that yet.');
+                        } if (response.status == 401) {
+                           window.location.href = "http://localhost:8080/oauth2/authorize?response_type=code&client_id=demo-client";
+                        } else {
+                            alert("Something went wrong");
                         }
                     },
                     dataType: "text"
@@ -134,7 +138,29 @@
                         //alert(response);
                         if (response.status == 403) {
                             alert('You are not allowed to do that yet.');
+                        } if (response.status == 401) {
+                            window.location.href = "http://localhost:8080/oauth2/authorize?response_type=code&client_id=demo-client";
+                        } else {
+                            alert("Something went wrong");
                         }
+                    },
+                    dataType: "text"
+                });
+            });
+
+
+            $('#logoutForm').submit(function (event) {
+                $.ajax({
+                    type: "POST",
+                    url: "/exit",
+                    headers: {"Authorization": "Bearer " + access_token},
+                    success: function (response) {
+                        //console.log(response);
+                        //alert(response);
+                    },
+                    error: function(response) {
+                        //console.log(response);
+                        //alert("Something went wrong");
                     },
                     dataType: "text"
                 });
@@ -191,6 +217,9 @@
             <input type="number" id="otp" name="otp" placeholder="Enter 8-digit code" />
         </div>
         <input class="button" type="submit" value="Verify my e-mail"/>
+    </form>
+    <form id="logoutForm" class="login-form" method="post">
+        <input class="button" type="submit" value="Logout"/>
     </form>
 </div>
 
