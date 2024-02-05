@@ -49,3 +49,14 @@ ctp:
   auth:
     hash:
       strength: 4
+
+
+com:
+  auth0:
+    domain: dev-hhahrzni3t6tv1sl.eu.auth0.com
+    clientId: 3gkosK6YUED1XpxWRLzBCovQkngj7WDD
+    clientSecret: Z7X_BThrQZ0AOLAwAGOqTqwGe2BoJMqrEE72ypf85jJnNjAQYDY9gtTUxZZEXvex
+    managementApi:
+      clientId: uxpXPEpZRRfjufbMlw9DGMZrATHJvcGs
+      clientSecret: -iwkZt1IIp97a8kod_iubqCD4cIDO2K49p2U88N4Of6ZyC6KMdcricAr5-pZL8z8
+      grantType: client_credentials

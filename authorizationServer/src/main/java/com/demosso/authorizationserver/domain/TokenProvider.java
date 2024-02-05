@@ -27,6 +27,6 @@ public class TokenProvider implements Serializable {
 	@Id
 	private String clientId;
 
-	private AuthProviderEnum provider;
+	private String provider;
 
 }

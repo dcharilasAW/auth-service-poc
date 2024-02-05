@@ -23,6 +23,7 @@ public class ClientServiceImpl implements ClientService {
 
 	@Override
 	public AuthProviderEnum getClientTokenProvider(String clientId) {
-		return providerRepository.findByClientId(clientId).getProvider();
+		String provider = providerRepository.findByClientId(clientId).getProvider();
+		return AuthProviderEnum.valueOf(provider);
 	}
 }
