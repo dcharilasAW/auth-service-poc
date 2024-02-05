@@ -1,6 +1,8 @@
 package com.demosso.authorizationserver.security.grantPassword;
 
+import com.demosso.authorizationserver.constant.AuthProviderEnum;
 import com.demosso.authorizationserver.security.CustomUserDetails;
+import com.demosso.authorizationserver.service.ClientService;
 import com.demosso.authorizationserver.service.impl.CustomUserDetailsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,12 +49,15 @@ public class GrantPasswordAuthenticationProvider implements AuthenticationProvid
     private final OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
     private final PasswordEncoder passwordEncoder;
 
+    private final ClientService clientService;
+
     public GrantPasswordAuthenticationProvider(
-        OAuth2AuthorizationService authorizationService,
-        OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator,
-        CustomUserDetailsService userDetailsService,
-        PasswordEncoder passwordEncoder
+            OAuth2AuthorizationService authorizationService,
+            OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator,
+            CustomUserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder, ClientService clientService
     ) {
+        this.clientService = clientService;
         Assert.notNull(authorizationService, "authorizationService cannot be null");
         Assert.notNull(tokenGenerator, "tokenGenerator cannot be null");
         Assert.notNull(userDetailsService, "userDetailsService cannot be null");
@@ -118,6 +123,16 @@ public class GrantPasswordAuthenticationProvider implements AuthenticationProvid
             .authorizedScopes(registeredClient.getScopes())
             .authorizationGrantType(GRANT_PASSWORD)
             .authorizationGrant(customPasswordAuthenticationToken);
+
+
+        //---------------------------
+        //find token provider depending on client
+        AuthProviderEnum provider = clientService.getClientTokenProvider(registeredClient.getClientId());
+        if (provider == AuthProviderEnum.AUTH0) {
+            //TODO something
+        } else {
+            //TODO go on
+        }
 
         // Generate the access token
         OAuth2TokenContext tokenContext = tokenContextBuilder

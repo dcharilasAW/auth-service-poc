@@ -29,6 +29,11 @@ public class PageController {
         return "init";
     }
 
+    @GetMapping("/admin")
+    public String admin(Model model) {
+        return "admin";
+    }
+
     @GetMapping("/auth")
     public String auth(Model model) {
         return "home";

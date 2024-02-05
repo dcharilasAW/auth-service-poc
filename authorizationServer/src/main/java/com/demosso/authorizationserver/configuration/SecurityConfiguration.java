@@ -37,6 +37,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/authenticate").permitAll()
                         .requestMatchers("/init").permitAll()
+                        .requestMatchers("/admin").permitAll()
                         .anyRequest().authenticated()
                 )
                 //.formLogin()

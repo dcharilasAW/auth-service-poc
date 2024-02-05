@@ -5,6 +5,7 @@ import com.demosso.authorizationserver.model.mixin.OAuth2ClientAuthenticationTok
 import com.demosso.authorizationserver.security.CustomUserDetails;
 import com.demosso.authorizationserver.security.grantPassword.GrantPasswordAuthenticationProvider;
 import com.demosso.authorizationserver.security.grantPassword.OAuth2GrantPasswordAuthenticationConverter;
+import com.demosso.authorizationserver.service.ClientService;
 import com.demosso.authorizationserver.service.impl.CustomUserDetailsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
@@ -88,10 +89,11 @@ public class AuthorizationServerConfiguration {
     @Bean
     public GrantPasswordAuthenticationProvider grantPasswordAuthenticationProvider(
             CustomUserDetailsService userDetailsService, OAuth2TokenGenerator<?> jwtTokenCustomizer,
-            OAuth2AuthorizationService authorizationService, PasswordEncoder passwordEncoder
+            OAuth2AuthorizationService authorizationService, PasswordEncoder passwordEncoder,
+            ClientService clientService
     ) {
         return new GrantPasswordAuthenticationProvider(
-            authorizationService, jwtTokenCustomizer, userDetailsService, passwordEncoder
+            authorizationService, jwtTokenCustomizer, userDetailsService, passwordEncoder, clientService
         );
     }
 
