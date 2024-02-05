@@ -1,5 +1,6 @@
 package com.demosso.authorizationserver.service;
 
+import com.demosso.authorizationserver.model.auth0.TokenResponse;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -31,7 +32,7 @@ public class Auth0IntegrationServiceImpl {
     @Value(value = "${com.auth0.managementApi.grantType}")
     private String grantType;
 
-    public String getApiToken() {
+    public TokenResponse getApiToken() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -46,9 +47,8 @@ public class Auth0IntegrationServiceImpl {
         HttpEntity<String> request = new HttpEntity<String>(requestBody.toString(), headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        HashMap<String, String> result = restTemplate.postForObject("https://" + domain +"/oauth/token", request, HashMap.class);
-
-        return result.get("access_token");
+        TokenResponse result = restTemplate.postForObject("https://" + domain +"/oauth/token", request, TokenResponse.class);
+        return result;
     }
 
     public String getManagementApiToken() {
