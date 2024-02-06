@@ -3,7 +3,6 @@ package com.demosso.authorizationserver.configuration;
 import com.demosso.authorizationserver.model.mixin.CustomUserDetailsMixin;
 import com.demosso.authorizationserver.model.mixin.OAuth2ClientAuthenticationTokenMixin;
 import com.demosso.authorizationserver.security.CustomUserDetails;
-import com.demosso.authorizationserver.security.dao.CustomDaoAuthenticationProvider;
 import com.demosso.authorizationserver.security.grantPassword.GrantPasswordAuthenticationProvider;
 import com.demosso.authorizationserver.security.grantPassword.OAuth2GrantPasswordAuthenticationConverter;
 import com.demosso.authorizationserver.service.Auth0IntegrationServiceImpl;
@@ -20,9 +19,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.jackson2.CoreJackson2Module;
 import org.springframework.security.jackson2.SecurityJackson2Modules;
@@ -78,17 +75,6 @@ public class AuthorizationServerConfiguration {
 
         return http.build();
     }
-
-/*    @Bean
-    public CustomDaoAuthenticationProvider daoAuthenticationProvider(
-        PasswordEncoder passwordEncoder, UserDetailsService userDetailsService*//*, UserDetailsPasswordService userDetailsPasswordService*//*
-    ) {
-        CustomDaoAuthenticationProvider daoAuthenticationProvider = new CustomDaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-        //daoAuthenticationProvider.setUserDetailsPasswordService(userDetailsPasswordService);
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-        return daoAuthenticationProvider;
-    }*/
 
     @Bean
     public GrantPasswordAuthenticationProvider grantPasswordAuthenticationProvider(
