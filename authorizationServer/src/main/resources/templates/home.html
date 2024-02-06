@@ -87,7 +87,7 @@
                         url: "/verify/" + $("#otp").val(),
                         headers: {"Authorization": "Bearer " + access_token},
                         success: function () {
-                            $("#verifyDiv").hide();
+                            $("#verifyForm").hide();
                             alert("Well done! Enjoy your new content!");
                         },
                         dataType: "json",

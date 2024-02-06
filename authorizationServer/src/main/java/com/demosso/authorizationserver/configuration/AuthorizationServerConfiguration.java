@@ -77,6 +77,16 @@ public class AuthorizationServerConfiguration {
     }
 
     @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider(
+            PasswordEncoder passwordEncoder, UserDetailsService userDetailsService
+    ) {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+        return daoAuthenticationProvider;
+    }
+
+    @Bean
     public GrantPasswordAuthenticationProvider grantPasswordAuthenticationProvider(
             CustomUserDetailsService userDetailsService, OAuth2TokenGenerator<?> jwtTokenCustomizer,
             OAuth2AuthorizationService authorizationService, PasswordEncoder passwordEncoder,
