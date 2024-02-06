@@ -139,9 +139,12 @@ public class GrantPasswordAuthenticationProvider implements AuthenticationProvid
         //find token provider depending on client
         AuthProviderEnum provider = clientService.getClientTokenProvider(registeredClient.getClientId());
         if (provider == AuthProviderEnum.AUTH0) {
-            //TODO something
+
             TokenResponse token = auth0IntegrationService.getApiToken();
             logger.info("auth0 = " + token);
+
+            //TODO there is a gap logic here, the token validates the client, not the user.
+            //TODO Maybe use this part to fetch user role/permissions only and then generate own token.
 
             // Generate the access token
             OAuth2TokenContext tokenContext = tokenContextBuilder
