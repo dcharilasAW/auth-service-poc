@@ -148,23 +148,6 @@
                 });
             });
 
-
-            $('#logoutForm').submit(function (event) {
-                $.ajax({
-                    type: "POST",
-                    url: "/exit",
-                    headers: {"Authorization": "Bearer " + access_token},
-                    success: function (response) {
-                        //console.log(response);
-                        //alert(response);
-                    },
-                    error: function(response) {
-                        //console.log(response);
-                        //alert("Something went wrong");
-                    },
-                    dataType: "text"
-                });
-            });
         })
 
     </script>
@@ -219,7 +202,7 @@
         <input class="button" type="submit" value="Verify my e-mail"/>
     </form>
     <form id="logoutForm" class="login-form" method="post">
-        <input class="button" type="submit" value="Logout"/>
+        <button onclick="location.href='http://localhost:8080/logout'" type="button">Logout</button>
     </form>
 </div>
 

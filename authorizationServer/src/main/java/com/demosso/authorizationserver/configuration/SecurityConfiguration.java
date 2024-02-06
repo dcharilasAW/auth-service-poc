@@ -60,6 +60,7 @@ public class SecurityConfiguration {
                     logout.clearAuthentication(true);
                     logout.invalidateHttpSession(true);
                     logout.deleteCookies("JSESSIONID");
+                    logout.logoutSuccessHandler((request, response, authentication) -> response.sendRedirect("http://localhost:8080/init"));
                 })
                 .build();
     }
