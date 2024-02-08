@@ -5,55 +5,36 @@ See guide: https://medium.com/@d.snezhinskiy/building-sso-based-on-spring-author
 
 # Components
 
-1. PostgresDB: setup with docker compose, login demosso/password
-2. Authorization server (port 8081)
-3. Resource server (port 8080)
+1. PostgresDB: setup with docker compose, login demosso-state/password
+2. Authorization server (port 8080)
+3. Resource server (port 8081)
 
-# Test data - Users
+# Roles & Authorities
 
-| Username   | Client       | Authorities                    |
-|------------|--------------|--------------------------------|
-| user       | demo-client  | read                           |
-| admin      | demo-client  | read, write                    |
-| admin      | admin-client | read, write, admin             |
-| superadmin | admin-client | read, write, admin, superadmin |
+| Role            | Authorities          |
+|-----------------|----------------------|
+| UNVERIFIED_USER | GAME_VIEW            |
+| VERIFIED_USER   | GAME_VIEW, GAME_PLAY |
 
 # Resources (Operations)
 
 | Operation   | Required Authority | 
 |-------------|--------------------|
-| /public     | -                  | 
-| /read       | read               | 
-| /write      | write              | 
-| /admin      | admin              | 
-| /superadmin | superadmin         |
+| /games      | GAME_VIEW          | 
+| /games/play | GAME_PLAY          | 
 
 # Postman collection
 
 [Auth Server PoC.postman_collection.json](Auth Server PoC.postman_collection.json)
 
-- Grant Password Flow
+# UI
 
-0. Create a Global variable named `access_token`
-1. Get access token (grant password) using the username, password & client of your choice (either _admin-client_ or _demo-client_)
-2. Test roles API (either _read_, _write_, _admin_ or _superadmin_)
+Open http://localhost:8080/init.
+Through this page you can perform registration or login. For login, the default OAuth2 Spring page is used.
+You can verify the access token generation in `oauth2_authorization` table. The authentication is performed via authorization code grant type.
 
-- Authorization Code (SSO)
-
-1. Open in browser: http://localhost:8081/oauth2/authorize?response_type=code&client_id=demo-client&redirect_uri=http://localhost:8080/auth
-2. Login with valid credentials. User will be redirected to new page. Copy the auth code from the url.
-3. Get access token (authorization code), after setting the above code as param
-
-# Added features
-
-1. Persist tokens (table oauth2_authorization)  -> get from auth-service
-2. Associate users with clients and support same username in mutiple clients with different authorities.
-3. User registration
-
-
-# Next steps
-- DB Lock (to support multiple instances) _-> get from auth-service_
-- DB cleanup (expired tokens in oauth2_authorization) _-> get from auth-service_
-- Authorization of asynchronous services
-- Add password encryption _-> get from auth-service_
-- Add data to authorize system calls (e.g. scheduler)
+After successful login, you are navigated to the home page, which offers the following functionalities:
+- **View games info**: This invokes the /games operation, which is available to all registered users.
+- **Play games**: This invokes the /games/play operation, which is available only to verified users. If you have not verified your email, you should get an error.
+- **Verify email**: This generates an OTP. In normal scenario this is sent to the user via email, for the purposes of this PoC it is simply logged. Once entered and verified, the user is assigned the VERIFIED_USER role, which unlocks access to play games.
+- **Logout**: Resets the session and redirects to init page.
